@@ -1,17 +1,10 @@
 #!usr/bin/env ruby
 require 'gosu'
 
-$b1x, $b2x, $b3x, $b4x, $b1y, $b2y, $b3y, $b4y = 0
 
-class Figure
 
-	def initialize(x, y)
-		$figx.push(50)
-		$figy.push(0)
-		@figtype = 1+rand(6)
-		@blockimage = Gosu::Image.new("pix/figs/block.png")
-	end
-	def draw (x, y)
+class MovingFigure
+	def countfig (x, y)
 		case @figtype
 		when 1
 			##
@@ -84,10 +77,20 @@ class Figure
 			$b4x = x
 			$b4y = y+20
 		end
-		@blockimage.draw($b1x, $b1y, 0)
-		@blockimage.draw($b2x, $b2y, 0)
-		@blockimage.draw($b3x, $b3y, 0)
-		@blockimage.draw($b4x, $b4y, 0)
+	end
+	def initialize(x, y)
+		$figx = x
+		$figy = y
+		countfig(x, y)
+		@figtype = 1+rand(6)
+		@blockimage = Gosu::Image.new("pix/figs/block.png")
+	end
+	def draw (x, y)
+		countfig(x, y)
+		@blockimage.draw($b1x*2, $b1y*2, 0)
+		@blockimage.draw($b2x*2, $b2y*2, 0)
+		@blockimage.draw($b3x*2, $b3y*2, 0)
+		@blockimage.draw($b4x*2, $b4y*2, 0)
 
 	end
 
@@ -113,9 +116,18 @@ class Figure
 
 end
 
+
+
 class Field
 	def initialize
-		#
+		#0 - empty
+		#1 - static
+		$FIELD = Array.new(200, 0)
+		@staticblock = Gosu::Image.new("pix/figs/static.png")
+	end
+
+	def draw(i, j)
+		@staticblock.draw(i*20, j*20, 0)
 	end
 
 	@@counter = 0
@@ -129,4 +141,21 @@ class Field
 			$moving = false
 		end
 	end
+
+	def fupdate
+		$FIELD[$b1x.to_i+$b1y.to_i/10] = 1
+		$FIELD[$b2x.to_i+$b2y.to_i/10] = 1
+		$FIELD[$b3x.to_i+$b3y.to_i/10] = 1
+		$FIELD[$b4x.to_i+$b4y.to_i/10] = 1
+	end
+
+	def debug
+		10.times do |i|
+			puts
+			20.times do |j|
+				print $FIELD[j+i*10] 
+			end
+		end
+	end
 end
+

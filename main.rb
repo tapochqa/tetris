@@ -3,13 +3,15 @@
 require 'gosu'
 require_relative 'gamecore'
 
+
 class TetrisGame < Gosu::Window
 
 	def initialize
-		$figx = []
-		$figy = []
-		$cof = 0
-		@fig = []
+		$figx = 0
+		$figy = 0
+		$b1x, $b2x, $b3x, $b4x, $b1y, $b2y, $b3y, $b4y = 0
+		@flag = false
+
 		super 200, 500
 		self.caption = "Tetris"
 		@background = Gosu::Image.new("pix/back.png", :tileable => false)
@@ -22,29 +24,38 @@ class TetrisGame < Gosu::Window
 	def update
 
 		if @newfigure == true
-			@fig.push(Figure.new(0, 0))
-			$cof+=1
-			@debug_cof = Gosu::Image.from_text $cof.to_s, 20
 			@newfigure = false
+			
+			@fig = MovingFigure.new(50, 0)
+			@flag = true
+			
 		end
-		@debug_fig = Gosu::Image.from_text @fig.size.to_s, 20
 		if @gamefield.recount
-			if @fig[@fig.size-1].moving
-				$figy[$cof-1]+=10
-				
+			if @fig.moving
+				$figy+=20
 			else
 				@newfigure = true
+				if @flag
+					@gamefield.fupdate
+				end
 			end
 		end
 	end
 
 	def draw
 		@background.draw(0, 0, 0)
-		@debug_cof.draw(0, 0, 0)
-		@debug_fig.draw(0, 30, 0)
-		$cof.times do |k|
-			@fig[k-1].draw($figx[k-1], $figy[k-1])
+
+		10.times do |i|
+			20.times do |j|
+				if $FIELD[j+i*10] == 1
+					@gamefield.draw(i, j)
+				end
+			end
 		end
+		
+		@fig.draw($figx, $figy)
+		
+
 	end
 end
 
