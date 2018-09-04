@@ -6,14 +6,11 @@ $b1x, $b2x, $b3x, $b4x, $b1y, $b2y, $b3y, $b4y = 0
 class Figure
 
 	def initialize(x, y)
-		$figx = x
-		$figy = y
+		$figx.push(50)
+		$figy.push(0)
 		@figtype = 1+rand(6)
 		@blockimage = Gosu::Image.new("pix/figs/block.png")
 	end
-
-
-
 	def draw (x, y)
 		case @figtype
 		when 1
@@ -60,8 +57,8 @@ class Figure
 			$b2y = y+10
 			$b3x = x+10
 			$b3y = y+10
-			$b4x = x+20
-			$b4y = y
+			$b4x = x
+			$b4y = y+20
 		when 5
 			#
 			#
@@ -73,7 +70,7 @@ class Figure
 			$b3x = x+20
 			$b3y = y+10
 			$b4x = x+20
-			$b4y = y+10
+			$b4y = y
 		when 6
 			 #
 			 #
@@ -97,8 +94,18 @@ class Figure
 	def moving
 		floor = 100
 
-		if $b1y >= floor or $b2y >= floor or $b3y >= floor or $b4y >= floor or $b5y >= floor or $b6y >= floor
-			return false
+		if $b1y >= floor
+			if $b1y >= floor
+				if $b1y >= floor
+					if $b1y >= floor
+						if $b1y >= floor
+							if $b1y >= floor
+								return false
+							end
+						end
+					end
+				end
+			end
 		else
 			return true
 		end
