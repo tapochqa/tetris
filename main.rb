@@ -7,10 +7,8 @@ require_relative 'gamecore'
 class TetrisGame < Gosu::Window
 
 	def initialize
-		$figx = 0
-		$figy = 0
 		$b1x, $b2x, $b3x, $b4x, $b1y, $b2y, $b3y, $b4y = 0
-		@flag = false
+		@flag, @flag2 = false
 
 		super 200, 500
 		self.caption = "Tetris"

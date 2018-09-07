@@ -98,19 +98,15 @@ class MovingFigure
 		floor = 100
 
 		if $b1y >= floor
-			if $b1y >= floor
-				if $b1y >= floor
-					if $b1y >= floor
-						if $b1y >= floor
-							if $b1y >= floor
-								return false
-							end
-						end
+			if $b2y >= floor
+				if $b3y >= floor
+					if $b4y >= floor
+						false
 					end
 				end
 			end
 		else
-			return true
+			true
 		end
 	end
 
@@ -142,11 +138,18 @@ class Field
 		end
 	end
 
-	def fupdate
-		$FIELD[$b1x.to_i+$b1y.to_i/10] = 1
-		$FIELD[$b2x.to_i+$b2y.to_i/10] = 1
-		$FIELD[$b3x.to_i+$b3y.to_i/10] = 1
-		$FIELD[$b4x.to_i+$b4y.to_i/10] = 1
+	def count_xy(x, y)
+		a = x
+		b = y
+		a+b/10
+	end
+
+	def fupdate	
+		puts $FIELD[count_xy($b1x, $b1y)] = 1
+		puts $FIELD[count_xy($b2x, $b2y)] = 1
+		puts $FIELD[count_xy($b3x, $b3y)] = 1
+		puts $FIELD[count_xy($b4x, $b4y)] = 1
+		puts 'check'
 	end
 
 	def debug
