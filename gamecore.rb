@@ -1,8 +1,6 @@
 #!usr/bin/env ruby
 require 'gosu'
 
-
-
 class MovingFigure
 	def countfig (x, y)
 		case @figtype
@@ -17,7 +15,6 @@ class MovingFigure
 			$b3y = y+10
 			$b4x = x+10
 			$b4y = y+10
-
 		when 2
 			####
 			$b1x = x
@@ -95,7 +92,7 @@ class MovingFigure
 	end
 
 	def moving
-		floor = 100
+		floor = 170
 
 		if $b1y >= floor
 			if $b2y >= floor

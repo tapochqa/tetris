@@ -38,7 +38,7 @@ class TetrisGame < Gosu::Window
 		end
 		if @gamefield.recount
 			if @fig.moving
-				$figy+=20
+				$figy+=10
 			else
 				@newfigure = true
 				if @flag
@@ -80,10 +80,10 @@ class TetrisGame < Gosu::Window
 		end
 =end
 #=begin
-		10.times do |i|
-			20.times do |j|
+		20.times do |i|
+			10.times do |j|
 				if $FIELD[j+i*10] == 1
-					@gamefield.draw(i, j)
+					@gamefield.draw(i, 19-j)
 					if @text_f
 						up_text
 					end
