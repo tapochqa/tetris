@@ -17,13 +17,21 @@ class TetrisGame < Gosu::Window
 		@gamefield = Field.new
 		@score = 0
 		@newfigure = true
+		@text_a = 0
+		@text_f = false
+		up_text
 	end
 
+
+
+	def up_text
+		@text_a += 1
+		@debug_text = Gosu::Image.from_text(@text_a.to_s, 20)
+	end
 	def update
 
-		if @newfigure == true
+		if @newfigure
 			@newfigure = false
-			
 			@fig = MovingFigure.new(50, 0)
 			@flag = true
 			
@@ -34,27 +42,63 @@ class TetrisGame < Gosu::Window
 			else
 				@newfigure = true
 				if @flag
-					@gamefield.fupdate
+					@flag = false
+					$FIELD = @gamefield.fupdate($FIELD)
+					@text_f = true
 				end
 			end
 		end
 	end
 
+
+
 	def draw
 		@background.draw(0, 0, 0)
+=begin 
+		f = $FIELD.map.with_index(0) { |i, x| (x%10).to_s+(x/10).to_s+i.to_s }
+		f.each do |i|
+			if i[-1] == '1'
+				if i.size == 3
+					x = i[0].to_i
+					y = i[1].to_i
+				elsif i.size == 4
+					x = i[0].to_i
+					y = i[1..2].to_i
+				end
 
+				@gamefield.draw(x, y)
+				if @text_f
+					up_text
+					# => puts "#{x} #{y}"
+					#print f
+					@gamefield.debug
+				end
+			end
+		end
+		if @text_f
+			@text_f = false
+		end
+=end
+#=begin
 		10.times do |i|
 			20.times do |j|
 				if $FIELD[j+i*10] == 1
 					@gamefield.draw(i, j)
+					if @text_f
+						up_text
+					end
 				end
 			end
 		end
-		
+		if @text_f
+			@text_f = false
+		end
+#=end
 		@fig.draw($figx, $figy)
-		
+		@debug_text.draw(0, 100, 0)
 
 	end
+
 end
 
 TetrisGame.new.show
