@@ -89,16 +89,10 @@ class MovingFigure
 	end
 
 	def moving
-		floor = 17
+		floor = 19
 
-		if $b1y >= floor
-			if $b2y >= floor
-				if $b3y >= floor
-					if $b4y >= floor
-						false
-					end
-				end
-			end
+		if $b1y == floor or ($b2y == floor or ($b3y == floor or $b4y == floor))
+			false
 		else
 			true
 		end
