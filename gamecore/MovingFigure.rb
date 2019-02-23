@@ -78,6 +78,7 @@ class MovingFigure
 		@figtype = 1+rand(6)
 		countfig(x, y)
 		@blockimage = Gosu::Image.new("pix/figs/block.png")
+		@mini_image = Gosu::Image.new("pix/figs/fig#{@figtype}.png")
 	end
 	def draw (x, y)
 		countfig(x, y)
@@ -88,14 +89,25 @@ class MovingFigure
 
 	end
 
-	def moving
-		floor = 19
+	def draw_mini_image (x, y)
+		@mini_image.draw(x, y, 0)
+	end
 
+	def check_floor
+		floor = 19
 		if $b1y == floor or ($b2y == floor or ($b3y == floor or $b4y == floor))
 			false
 		else
 			true
 		end
+	end
+
+	def check_other_figs_down
+		a = true
+		if $FIELD [$b1x][$b1y+1] == 1 or ($FIELD [$b2x][$b2y+1] == 1 or ($FIELD [$b3x][$b3y+1] == 1 or $FIELD [$b4x][$b4y+1] == 1))
+			a = false
+		end
+		a
 	end
 
 end

@@ -18,6 +18,7 @@ class TetrisGame < Gosu::Window
 		@gamefield = Field.new
 		@score = 0
 		@newfigure = true
+		@fig_next = MovingFigure.new(5, 0)
 		@text_a = 0
 		@text_f = false
 		#up_text
@@ -33,13 +34,13 @@ class TetrisGame < Gosu::Window
 
 		if @newfigure
 			@newfigure = false
-			@fig = MovingFigure.new(5, 0)
+			@fig = @fig_next
+			@fig_next = MovingFigure.new(5, 0)
 			@flag = true
-			
 		end
 		if @gamefield.recount
-			if @fig.moving
-				$figy+=1
+			if @fig.check_floor and @fig.check_other_figs_down
+					$figy+=1
 			else
 				@newfigure = true
 				if @flag
@@ -55,6 +56,7 @@ class TetrisGame < Gosu::Window
 
 	def draw
 		@background.draw(0, 0, 0)
+		@fig_next.draw_mini_image(50, 450)
 
 		10.times do |i|
 			20.times do |j|
