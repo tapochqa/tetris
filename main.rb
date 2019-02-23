@@ -56,9 +56,9 @@ class TetrisGame < Gosu::Window
 	def draw
 		@background.draw(0, 0, 0)
 
-		20.times do |i|
-			10.times do |j|
-				if $FIELD[j+i*10] == 1
+		10.times do |i|
+			20.times do |j|
+				if $FIELD[i][j] == 1
 					@gamefield.draw(i, j)
 					if @text_f
 						up_text
