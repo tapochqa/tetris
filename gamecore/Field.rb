@@ -23,8 +23,8 @@ class Field
 		end
 	end
 
-	def fupdate	(f)
-		$fcm.each do |c|
+	def fupdate	(f, fcm)
+		fcm.each do |c|
 			f[c[0]][c[1]]= 1
 		end
 		f

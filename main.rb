@@ -8,23 +8,18 @@ require_relative 'gamecore/MovingFigure'
 class TetrisGame < Gosu::Window
 
 	def initialize
-		$b1x, $b2x, $b3x, $b4x, $b1y, $b2y, $b3y, $b4y = 0
 		@flag, @flag2 = false
-
 		super 200, 500
 		self.caption = "Tetris"
 		@background = Gosu::Image.new("pix/back.png", :tileable => false)
-		
 		@gamefield = Field.new
 		@score = 0
 		@newfigure = true
-		@fig_next = MovingFigure.new(5, 0)
+		@fig_next = MovingFigure.new(5, 0, 1+rand(6))
 		@text_a = 0
 		@text_f = false
 		#up_text
 	end
-
-
 
 	def up_text
 		@text_a += 1
@@ -32,12 +27,29 @@ class TetrisGame < Gosu::Window
 	end
 
 	def move_left 
-		#
+		a = true 
+		@fig.fcm.each do |c|
+			if c[0] == 0 or $FIELD [c[0]-1][c[1]] == 1
+				a = false
+			end
+		end
+		if a
+			$figx -= 1
+		end
 	end
 
 	def move_right
-		#
+		a = true
+		@fig.fcm.each do |c|
+			if c[0] == 9 or $FIELD [c[0]+1][c[1]] == 1
+				a = false
+			end
+		end
+		if a 
+			$figx += 1
+		end
 	end
+
 
 	def drop_down
 		while @fig.check_floor and @fig.check_other_figs_down
@@ -46,27 +58,40 @@ class TetrisGame < Gosu::Window
 		end
 	end
 
+	def rotate
+		a = true
+		@morphed_figure = MovingFigure.new($figx, $figy, @fig.morph(@fig.figtype))
+		@morphed_figure.fcm.each do |c|
+			if $FIELD [c[0]][c[1]] == 1
+				a = false
+			end
+		end
+		if a
+			@fig = @morphed_figure
+		end
+	end
+
+
 	def button_down (id)
 		case id
 		when Gosu::KbEscape
 			close
 		when Gosu::KbLeft
-			if $figx >= 1
-				$figx -= 1
-			end
+			move_left
 		when Gosu::KbRight
-			if $figx+$fig_width <= 9
-				$figx +=1
-			end
+			move_right
 		when Gosu::KbDown
 			drop_down
+		when Gosu::KbUp
+			rotate
 		end
 	end
+
 	def update
 		if @newfigure
 			@newfigure = false
 			@fig = @fig_next
-			@fig_next = MovingFigure.new(5, 0)
+			@fig_next = MovingFigure.new(5, 0, 1+rand(6))
 			@flag = true
 		end
 		if @gamefield.recount
@@ -76,14 +101,12 @@ class TetrisGame < Gosu::Window
 				@newfigure = true
 				if @flag
 					@flag = false
-					$FIELD = @gamefield.fupdate($FIELD)
+					$FIELD = @gamefield.fupdate($FIELD, @fig.fcm)
 					@text_f = true
 				end
 			end
 		end
 	end
-
-
 
 	def draw
 		@background.draw(0, 0, 0)
