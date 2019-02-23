@@ -41,10 +41,8 @@ class TetrisGame < Gosu::Window
 
 	def drop_down
 		while @fig.check_floor and @fig.check_other_figs_down
-			if @gamefield.recount
-				$figy+=1
-			end
-			puts $figy
+			$figy+=1
+			@fig.countfig($figx, $figy)
 		end
 	end
 
