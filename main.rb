@@ -1,7 +1,8 @@
 #!usr/bin/env ruby
 
 require 'gosu'
-require_relative 'gamecore'
+require_relative 'gamecore/Field'
+require_relative 'gamecore/MovingFigure'
 
 
 class TetrisGame < Gosu::Window
