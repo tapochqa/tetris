@@ -18,12 +18,13 @@ class TetrisGame < Gosu::Window
 		@fig_next = MovingFigure.new(5, 0, 1+rand(6))
 		@text_a = 0
 		@text_f = false
-		#up_text
+		$POINTS = 0
+		up_text
 	end
 
 	def up_text
-		@text_a += 1
-		@debug_text = Gosu::Image.from_text(@text_a.to_s, 20)
+		@text_a = $POINTS
+		@points_text = Gosu::Image.from_text(@text_a.to_s, 20)
 	end
 
 	def move_left 
@@ -71,6 +72,10 @@ class TetrisGame < Gosu::Window
 		end
 	end
 
+	def gameover
+		#
+	end
+
 
 	def button_down (id)
 		case id
@@ -106,6 +111,10 @@ class TetrisGame < Gosu::Window
 				end
 			end
 		end
+
+		if $POINTS.to_i > $BEST.to_i
+			File.open('best', "w") { |io| io.write $POINTS.to_s  }
+		end
 	end
 
 	def draw
@@ -127,10 +136,32 @@ class TetrisGame < Gosu::Window
 		end
 
 		@fig.draw($figx, $figy)
-		#@debug_text.draw(0, 100, 0)
+		@points_text.draw(150, 420, 0)
 
 	end
 
 end
 
-TetrisGame.new.show
+class MenuWindow < Gosu::Window
+	def initialize
+		super 200, 200
+		self.caption = "Tetris menu"
+		@start_text = Gosu::Image.from_text('f to start', 20)
+		$BEST = IO.read('best')
+		@best_text = Gosu::Image.from_text("BEST #{$BEST}", 20)
+	end
+
+	def button_down (id)
+		case id
+		when Gosu::KbF
+			TetrisGame.new.show
+		end
+	end
+
+	def draw
+		@start_text.draw(10, 50, 0)
+		@best_text.draw(10, 70, 0)
+	end
+end
+
+MenuWindow.new.show

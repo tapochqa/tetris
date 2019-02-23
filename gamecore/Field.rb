@@ -27,8 +27,41 @@ class Field
 		fcm.each do |c|
 			f[c[0]][c[1]]= 1
 		end
+		f = rek_rows(f)
 		f
 	end
+
+	def check_full_rows
+		rows_to_rek = []
+		20.times do |i|
+			full_in_row = 0
+			10.times do |j|
+				if $FIELD [j][i] == 1 
+					full_in_row+=1
+				end
+			end
+
+			if full_in_row == 10
+				rows_to_rek.push(i)
+			end
+		end
+		rows_to_rek
+	end
+
+	def rek_rows (f)
+		clean_row = Array.new(10) {0}
+		full_row = Array.new(10) {1}
+		flipped = f.transpose
+		flipped.delete(full_row)
+		until flipped.size == 20
+			flipped.unshift (clean_row)
+			$POINTS+=1
+		end
+		f = flipped.transpose
+	end
+
+
+
 
 end
 
