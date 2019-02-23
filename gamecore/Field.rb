@@ -24,10 +24,9 @@ class Field
 	end
 
 	def fupdate	(f)
-		f[$b1x][$b1y] = 1
-		f[$b2x][$b2y] = 1
-		f[$b3x][$b3y] = 1
-		f[$b4x][$b4y] = 1
+		$fcm.each do |c|
+			f[c[0]][c[1]]= 1
+		end
 		f
 	end
 

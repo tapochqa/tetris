@@ -1,83 +1,36 @@
 class MovingFigure
+
+	def f_to_f (fig_type)
+		
+		f = Array.new() {[]}
+		c = Array.new(2, 0)
+
+		IO.foreach("gamecore/#{fig_type}") do |line|
+			line.split('').each do |symbol|
+				if symbol == '1'
+					f.push([c[0], c[1]])
+				end
+				c[0]+=1
+			end
+			c[0]=0
+			c[1]+=1
+		end
+		$fig_width = f[0].size
+		f
+	end
+
+
 	def countfig (x, y)
-		case @figtype
-		when 1
-			##
-			##
-			$b1x = x
-			$b1y = y
-			$b2x = x+1
-			$b2y = y
-			$b3x = x
-			$b3y = y+1
-			$b4x = x+1
-			$b4y = y+1
-			$fig_width = 2 
-		when 2
-			####
-			$b1x = x
-			$b1y = y
-			$b2x = x+1
-			$b2y = y
-			$b3x = x+2
-			$b3y = y
-			$b4x = x+3
-			$b4y = y
-			$fig_width = 4
-		when 3
-			#
-			##
-			 #
-			$b1x = x
-			$b1y = y
-			$b2x = x
-			$b2y = y+1
-			$b3x = x+1
-			$b3y = y+1
-			$b4x = x+1
-			$b4y = y+2
-			$fig_width = 2
-		when 4
-			 #
-			##
-			#
-			$b1x = x+1
-			$b1y = y
-			$b2x = x
-			$b2y = y+1
-			$b3x = x+1
-			$b3y = y+1
-			$b4x = x
-			$b4y = y+2
-			$fig_width = 2
-		when 5
-			#
-			#
-			##
-			$b1x = x
-			$b1y = y
-			$b2x = x+1
-			$b2y = y
-			$b3x = x+2
-			$b3y = y+1
-			$b4x = x+2
-			$b4y = y
-			$fig_width = 2
-		when 6
-			 #
-			 #
-			##
-			$b1x = x+1
-			$b1y = y
-			$b2x = x+1
-			$b2y = y+1
-			$b3x = x+1
-			$b3y = y+2
-			$b4x = x
-			$b4y = y+2
-			$fig_width = 2
+		# $fcm is figure coordinates massive
+		$fcm = f_to_f(@figtype)
+		$fcm.each do |thing|
+			thing[0]+=x
+			thing[1]+=y
 		end
 	end
+	
+	attr_accessor :figtype
+
 	def initialize(x, y)
 		$figx = x
 		$figy = y
@@ -88,11 +41,9 @@ class MovingFigure
 	end
 	def draw (x, y)
 		countfig(x, y)
-		@blockimage.draw($b1x*20, $b1y*20, 0)
-		@blockimage.draw($b2x*20, $b2y*20, 0)
-		@blockimage.draw($b3x*20, $b3y*20, 0)
-		@blockimage.draw($b4x*20, $b4y*20, 0)
-
+		4.times do |i|
+			@blockimage.draw($fcm[i][0]*20, $fcm[i][1]*20, 0)
+		end
 	end
 
 	def draw_mini_image (x, y)
@@ -101,19 +52,21 @@ class MovingFigure
 
 	def check_floor
 		floor = 19
-		if $b1y == floor or ($b2y == floor or ($b3y == floor or $b4y == floor))
-			false
-		else
-			true
+		$fcm.each do |c|
+			if c[1] == floor
+				false
+				break
+			else
+				true
+			end
 		end
 	end
 
 	def check_other_figs_down
 		a = true
-		if $FIELD [$b1x][$b1y+1] == 1 or ($FIELD [$b2x][$b2y+1] == 1 or ($FIELD [$b3x][$b3y+1] == 1 or $FIELD [$b4x][$b4y+1] == 1))
+		if $FIELD [$fcm[0][0]][$fcm[0][1]+1] == 1 or ($FIELD [$fcm[1][0]][$fcm[1][1]+1] == 1 or ($FIELD [$fcm[2][0]][$fcm[2][1]+1] == 1 or $FIELD [$fcm[3][0]][$fcm[3][1]+1] == 1))
 			a = false
 		end
 		a
 	end
-
 end
