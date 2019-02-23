@@ -6,21 +6,21 @@ class MovingFigure
 			##
 			$b1x = x
 			$b1y = y
-			$b2x = x+10
+			$b2x = x+1
 			$b2y = y
 			$b3x = x
-			$b3y = y+10
-			$b4x = x+10
-			$b4y = y+10
+			$b3y = y+1
+			$b4x = x+1
+			$b4y = y+1
 		when 2
 			####
 			$b1x = x
 			$b1y = y
-			$b2x = x+10
+			$b2x = x+1
 			$b2y = y
-			$b3x = x+20
+			$b3x = x+2
 			$b3y = y
-			$b4x = x+30
+			$b4x = x+3
 			$b4y = y
 		when 3
 			#
@@ -29,47 +29,47 @@ class MovingFigure
 			$b1x = x
 			$b1y = y
 			$b2x = x
-			$b2y = y+10
-			$b3x = x+10
-			$b3y = y+10
-			$b4x = x+10
-			$b4y = y+20
+			$b2y = y+1
+			$b3x = x+1
+			$b3y = y+1
+			$b4x = x+1
+			$b4y = y+2
 		when 4
 			 #
 			##
 			#
-			$b1x = x+10
+			$b1x = x+1
 			$b1y = y
 			$b2x = x
-			$b2y = y+10
-			$b3x = x+10
-			$b3y = y+10
+			$b2y = y+1
+			$b3x = x+1
+			$b3y = y+1
 			$b4x = x
-			$b4y = y+20
+			$b4y = y+2
 		when 5
 			#
 			#
 			##
 			$b1x = x
 			$b1y = y
-			$b2x = x+10
+			$b2x = x+1
 			$b2y = y
-			$b3x = x+20
-			$b3y = y+10
-			$b4x = x+20
+			$b3x = x+2
+			$b3y = y+1
+			$b4x = x+2
 			$b4y = y
 		when 6
 			 #
 			 #
 			##
-			$b1x = x+10
+			$b1x = x+1
 			$b1y = y
-			$b2x = x+10
-			$b2y = y+10
-			$b3x = x+10
-			$b3y = y+20
+			$b2x = x+1
+			$b2y = y+1
+			$b3x = x+1
+			$b3y = y+2
 			$b4x = x
-			$b4y = y+20
+			$b4y = y+2
 		end
 	end
 	def initialize(x, y)
@@ -81,15 +81,15 @@ class MovingFigure
 	end
 	def draw (x, y)
 		countfig(x, y)
-		@blockimage.draw($b1x*2, $b1y*2, 0)
-		@blockimage.draw($b2x*2, $b2y*2, 0)
-		@blockimage.draw($b3x*2, $b3y*2, 0)
-		@blockimage.draw($b4x*2, $b4y*2, 0)
+		@blockimage.draw($b1x*20, $b1y*20, 0)
+		@blockimage.draw($b2x*20, $b2y*20, 0)
+		@blockimage.draw($b3x*20, $b3y*20, 0)
+		@blockimage.draw($b4x*20, $b4y*20, 0)
 
 	end
 
 	def moving
-		floor = 170
+		floor = 17
 
 		if $b1y >= floor
 			if $b2y >= floor

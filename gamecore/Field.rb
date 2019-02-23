@@ -13,7 +13,7 @@ class Field
 
 
 	def recount
-		if @counter == 20
+		if @counter == 17
 			$moving = true
 			@counter = 0
 		else
@@ -23,9 +23,7 @@ class Field
 	end
 
 	def count_xy(x, y)
-		a = x
-		b = y
-		a+b/10
+		x+y
 	end
 
 	def fupdate	(f)
@@ -41,7 +39,7 @@ class Field
 		puts c
 		f[d] = 1
 		puts d
-		puts rand()
+		#puts rand()
 		f
 	end
 
