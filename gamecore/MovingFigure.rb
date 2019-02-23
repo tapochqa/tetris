@@ -12,6 +12,7 @@ class MovingFigure
 			$b3y = y+1
 			$b4x = x+1
 			$b4y = y+1
+			$fig_width = 2 
 		when 2
 			####
 			$b1x = x
@@ -22,6 +23,7 @@ class MovingFigure
 			$b3y = y
 			$b4x = x+3
 			$b4y = y
+			$fig_width = 4
 		when 3
 			#
 			##
@@ -34,6 +36,7 @@ class MovingFigure
 			$b3y = y+1
 			$b4x = x+1
 			$b4y = y+2
+			$fig_width = 2
 		when 4
 			 #
 			##
@@ -46,6 +49,7 @@ class MovingFigure
 			$b3y = y+1
 			$b4x = x
 			$b4y = y+2
+			$fig_width = 2
 		when 5
 			#
 			#
@@ -58,6 +62,7 @@ class MovingFigure
 			$b3y = y+1
 			$b4x = x+2
 			$b4y = y
+			$fig_width = 2
 		when 6
 			 #
 			 #
@@ -70,6 +75,7 @@ class MovingFigure
 			$b3y = y+2
 			$b4x = x
 			$b4y = y+2
+			$fig_width = 2
 		end
 	end
 	def initialize(x, y)

@@ -31,18 +31,5 @@ class Field
 		f
 	end
 
-	def debug
-		10.times do |i|
-			puts
-			20.times do |j|
-				if $FIELD[i][j]== 1
-					print '* '
-				else print '. '
-				end 
-			end
-		end
-	puts
-	puts '===END==='
-	end
 end
 

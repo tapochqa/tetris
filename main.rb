@@ -30,8 +30,41 @@ class TetrisGame < Gosu::Window
 		@text_a += 1
 		@debug_text = Gosu::Image.from_text(@text_a.to_s, 20)
 	end
-	def update
 
+	def move_left 
+		#
+	end
+
+	def move_right
+		#
+	end
+
+	def drop_down
+		while @fig.check_floor and @fig.check_other_figs_down
+			if @gamefield.recount
+				$figy+=1
+			end
+			puts $figy
+		end
+	end
+
+	def button_down (id)
+		case id
+		when Gosu::KbEscape
+			close
+		when Gosu::KbLeft
+			if $figx >= 1
+				$figx -= 1
+			end
+		when Gosu::KbRight
+			if $figx+$fig_width <= 9
+				$figx +=1
+			end
+		when Gosu::KbDown
+			drop_down
+		end
+	end
+	def update
 		if @newfigure
 			@newfigure = false
 			@fig = @fig_next
