@@ -9,7 +9,7 @@ class TetrisGame < Gosu::Window
 
 	def initialize
 		@flag, @flag2 = false
-		super 200, 500
+		super 300, 400
 		self.caption = "Tetris"
 		@background = Gosu::Image.new("pix/back.png", :tileable => false)
 		@gamefield = Field.new
@@ -19,6 +19,7 @@ class TetrisGame < Gosu::Window
 		@text_a = 0
 		@text_f = false
 		$POINTS = 0
+		@table = Array.new(4) { |i| Gosu::Image.new("pix/digits/0.png", :tileable => false) }
 		up_text
 
 		#variables for methods
@@ -120,6 +121,8 @@ class TetrisGame < Gosu::Window
 	end
 
 
+
+
 	def button_down (id)
 		case id
 		when Gosu::KbEscape
@@ -149,7 +152,7 @@ class TetrisGame < Gosu::Window
 				@newfigure = true
 				if @flag
 					@flag = false
-					$FIELD = @gamefield.fupdate($FIELD, @fig.fcm)
+					$FIELD = @gamefield.fupdate($FIELD, @fig.fcm, @table)
 					up_text
 					@text_f = true
 				end
@@ -166,7 +169,7 @@ class TetrisGame < Gosu::Window
 
 	def draw
 		@background.draw(0, 0, 0)
-		@fig_next.draw_mini_image(50, 450)
+		@fig_next.draw_mini_image(210, 50)
 
 		10.times do |i|
 			20.times do |j|
@@ -178,6 +181,12 @@ class TetrisGame < Gosu::Window
 
 		@fig.draw(@fig.figx, @fig.figy)
 		@points_text.draw(150, 420, 0)
+		x = 210
+		y = 10
+		@table.each do |pic|
+			pic.draw(x, y, 0)
+			x+=20
+		end
 	end
 
 end
@@ -213,3 +222,4 @@ class MenuWindow < Gosu::Window
 end
 
 MenuWindow.new(false).show
+
