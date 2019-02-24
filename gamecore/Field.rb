@@ -31,23 +31,6 @@ class Field
 		f
 	end
 
-	def check_full_rows
-		rows_to_rek = []
-		20.times do |i|
-			full_in_row = 0
-			10.times do |j|
-				if $FIELD [j][i] == 1 
-					full_in_row+=1
-				end
-			end
-
-			if full_in_row == 10
-				rows_to_rek.push(i)
-			end
-		end
-		rows_to_rek
-	end
-
 	def rek_rows (f)
 		clean_row = Array.new(10) {0}
 		full_row = Array.new(10) {1}

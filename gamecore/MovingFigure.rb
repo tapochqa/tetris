@@ -40,6 +40,7 @@ class MovingFigure
 		if @figtype >=1 and @figtype <= 6
 			@mini_image = Gosu::Image.new("pix/figs/fig#{@figtype}.png")
 		end
+		@floor = 19
 	end
 
 	def draw (x, y)
@@ -54,9 +55,8 @@ class MovingFigure
 	end
 
 	def check_floor
-		floor = 19
 		@fcm.each do |c|
-			if c[1] == floor
+			if c[1] == @floor
 				false
 				break
 			else
