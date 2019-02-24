@@ -78,7 +78,13 @@ class TetrisGame < Gosu::Window
 	end
 
 	def gameover
-		#
+		a = false
+		10.times do |i|
+			if $FIELD[i][0] == 1
+				a = true
+			end
+		end
+		a
 	end
 
 
@@ -120,6 +126,9 @@ class TetrisGame < Gosu::Window
 		if $POINTS.to_i > $BEST.to_i
 			File.open('best', "w") { |io| io.write $POINTS.to_s  }
 		end
+		if gameover
+			MenuWindow.new(true).show
+		end
 	end
 
 	def draw
@@ -148,12 +157,15 @@ class TetrisGame < Gosu::Window
 end
 
 class MenuWindow < Gosu::Window
-	def initialize
+	def initialize (game_over)
 		super 200, 200
 		self.caption = "Tetris menu"
+		@game_over = game_over
+		@game_over_text = Gosu::Image.from_text('GAME OVER', 20)
 		@start_text = Gosu::Image.from_text('f to start, esc to exit', 20)
 		$BEST = IO.read('best')
 		@best_text = Gosu::Image.from_text("BEST #{$BEST}", 20)
+
 	end
 
 	def button_down (id)
@@ -166,9 +178,12 @@ class MenuWindow < Gosu::Window
 	end
 
 	def draw
+		if @game_over
+			@game_over_text.draw(10, 30, 0)
+		end
 		@start_text.draw(10, 50, 0)
 		@best_text.draw(10, 70, 0)
 	end
 end
 
-MenuWindow.new.show
+MenuWindow.new(false).show
