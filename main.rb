@@ -118,6 +118,7 @@ class TetrisGame < Gosu::Window
 				if @flag
 					@flag = false
 					$FIELD = @gamefield.fupdate($FIELD, @fig.fcm)
+					up_text
 					@text_f = true
 				end
 			end
@@ -139,19 +140,12 @@ class TetrisGame < Gosu::Window
 			20.times do |j|
 				if $FIELD[i][j] == 1
 					@gamefield.draw(i, j)
-					if @text_f
-						up_text
-					end
 				end
 			end
-		end
-		if @text_f
-			@text_f = false
 		end
 
 		@fig.draw($figx, $figy)
 		@points_text.draw(150, 420, 0)
-
 	end
 
 end
