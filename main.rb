@@ -66,7 +66,7 @@ class TetrisGame < Gosu::Window
 		a = true
 		@morphed_figure = MovingFigure.new($figx, $figy, @fig.morph(@fig.figtype))
 		@morphed_figure.fcm.each do |c|
-			if c[0]<0 or c[0]>=9
+			if c[0]<0 or c[0]>9
 				a = false
 			elsif $FIELD[c[0]][c[1]] != 0
 				a = false
