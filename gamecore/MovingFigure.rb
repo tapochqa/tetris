@@ -28,16 +28,18 @@ class MovingFigure
 		end
 	end
 	
-	attr_accessor :figtype 
+	attr_accessor :figtype
 	attr_accessor :fcm
+	attr_accessor :figx
+	attr_accessor :figy
 
 	def initialize(x, y, f_type)
-		$figx = x
-		$figy = y
+		@figx = x
+		@figy = y
 		@figtype = f_type
 		countfig(x, y)
 		@blockimage = Gosu::Image.new("pix/figs/block.png")
-		if @figtype >=1 and @figtype <= 6
+		if @figtype >=1 and @figtype <= 7
 			@mini_image = Gosu::Image.new("pix/figs/fig#{@figtype}.png")
 		end
 		@floor = 19
@@ -105,6 +107,14 @@ class MovingFigure
 			63
 		when 63
 			6
+		when 7
+			71
+		when 71
+			72
+		when 72
+			73
+		when 73
+			7
 		end
 	end
 
