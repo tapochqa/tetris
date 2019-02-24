@@ -15,7 +15,7 @@ class TetrisGame < Gosu::Window
 		@gamefield = Field.new
 		@score = 0
 		@newfigure = true
-		@fig_next = MovingFigure.new(5, 0, 1+rand(6))
+		@fig_next = MovingFigure.new(5, 0, 1+rand(7))
 		@text_a = 0
 		@text_f = false
 		$POINTS = 0
@@ -30,48 +30,80 @@ class TetrisGame < Gosu::Window
 		@points_text = Gosu::Image.from_text(@text_a.to_s, 20)
 	end
 
-	def move_left 
+	def move_left (fig)
 		a = true 
-		@fig.fcm.each do |c|
+		fig.fcm.each do |c|
 			if c[0] == 0 or $FIELD [c[0]-1][c[1]] == 1
 				a = false
 			end
 		end
 		if a
-			$figx -= 1
+			fig.figx -= 1
 		end
 	end
 
-	def move_right
+	def move_right (fig)
 		a = true
-		@fig.fcm.each do |c|
+		fig.fcm.each do |c|
 			if c[0] == 9 or $FIELD [c[0]+1][c[1]] == 1
 				a = false
 			end
 		end
 		if a 
-			$figx += 1
+			fig.figx += 1
 		end
 	end
 
-
 	def drop_down
 		while @fig.check_floor and @fig.check_other_figs_down
-			$figy+=1
-			@fig.countfig($figx, $figy)
+			@fig.figy+=1
+			@fig.countfig(@fig.figx, @fig.figy)
 		end
+	end
+
+	def check_edge(fcm)
+		# 1 left
+		# 2 right
+		# 0 OK
+		a = 0
+		fcm.each do |c|
+			if c[0]<0
+				a = 1
+			elsif c[0]>9
+				a = 2
+			end
+		end
+		a
 	end
 
 	def rotate
 		a = true
-		@morphed_figure = MovingFigure.new($figx, $figy, @fig.morph(@fig.figtype))
+		@morphed_figure = MovingFigure.new(@fig.figx, @fig.figy, @fig.morph(@fig.figtype))
 		@morphed_figure.fcm.each do |c|
-			if c[0]<0 or c[0]>9
-				a = false
-			elsif $FIELD[c[0]][c[1]] != 0
+
+			if check_edge(@morphed_figure.fcm) == 1
+				until check_edge(@morphed_figure.fcm) == 0 do
+					@morphed_figure.figx+=1
+					@morphed_figure.countfig(@morphed_figure.figx, @morphed_figure.figy)
+				end
+
+			elsif check_edge(@morphed_figure.fcm) == 2
+				until check_edge(@morphed_figure.fcm) == 0 do 
+					@morphed_figure.figx-=1
+					@morphed_figure.countfig(@morphed_figure.figx, @morphed_figure.figy)
+				end
+			end
+
+		end
+
+		@morphed_figure.fcm.each do |c|
+
+			if $FIELD[c[0]][c[1]] == 1
 				a = false
 			end
+
 		end
+
 		if a
 			@fig = @morphed_figure
 		end
@@ -93,9 +125,9 @@ class TetrisGame < Gosu::Window
 		when Gosu::KbEscape
 			close
 		when Gosu::KbLeft
-			move_left
+			move_left(@fig)
 		when Gosu::KbRight
-			move_right
+			move_right(@fig)
 		when Gosu::KbDown
 			drop_down
 		when Gosu::KbUp
@@ -107,12 +139,12 @@ class TetrisGame < Gosu::Window
 		if @newfigure
 			@newfigure = false
 			@fig = @fig_next
-			@fig_next = MovingFigure.new(5, 0, 1+rand(6))
+			@fig_next = MovingFigure.new(5, 0, 1+rand(7))
 			@flag = true
 		end
 		if @gamefield.recount
 			if @fig.check_floor and @fig.check_other_figs_down
-					$figy+=1
+					@fig.figy+=1
 			else
 				@newfigure = true
 				if @flag
@@ -144,7 +176,7 @@ class TetrisGame < Gosu::Window
 			end
 		end
 
-		@fig.draw($figx, $figy)
+		@fig.draw(@fig.figx, @fig.figy)
 		@points_text.draw(150, 420, 0)
 	end
 
