@@ -51,13 +51,20 @@ class Field
 	def rek_rows (f)
 		clean_row = Array.new(10) {0}
 		full_row = Array.new(10) {1}
+		bonus = 0
 		flipped = f.transpose
 		flipped.delete(full_row)
 		until flipped.size == 20
 			flipped.unshift (clean_row)
-			$POINTS+=1
+			if bonus == 0
+				bonus+=1
+			else
+				bonus*=3
+			end
 		end
 		f = flipped.transpose
+		$POINTS+=bonus
+		f
 	end
 
 

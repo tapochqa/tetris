@@ -20,6 +20,9 @@ class TetrisGame < Gosu::Window
 		@text_f = false
 		$POINTS = 0
 		up_text
+
+		#variables for methods
+		
 	end
 
 	def up_text
@@ -63,8 +66,10 @@ class TetrisGame < Gosu::Window
 		a = true
 		@morphed_figure = MovingFigure.new($figx, $figy, @fig.morph(@fig.figtype))
 		@morphed_figure.fcm.each do |c|
-			if $FIELD [c[0]][c[1]] == 1
+			print c
+			if $FIELD [c[0]][c[1]] == 1 or (c[0]<0 or c[0]>=9)
 				a = false
+				break
 			end
 		end
 		if a
@@ -146,7 +151,7 @@ class MenuWindow < Gosu::Window
 	def initialize
 		super 200, 200
 		self.caption = "Tetris menu"
-		@start_text = Gosu::Image.from_text('f to start', 20)
+		@start_text = Gosu::Image.from_text('f to start, esc to exit', 20)
 		$BEST = IO.read('best')
 		@best_text = Gosu::Image.from_text("BEST #{$BEST}", 20)
 	end
@@ -155,6 +160,8 @@ class MenuWindow < Gosu::Window
 		case id
 		when Gosu::KbF
 			TetrisGame.new.show
+		when Gosu::KbEscape
+			close
 		end
 	end
 
