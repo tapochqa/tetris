@@ -8,6 +8,7 @@ require_relative 'gamecore/MovingFigure'
 class TetrisGame < Gosu::Window
 
 	def initialize
+
 		@flag, @flag2 = false
 		super 300, 400
 		self.caption = "Tetris"
@@ -19,9 +20,12 @@ class TetrisGame < Gosu::Window
 		@text_a = 0
 		@text_f = false
 		$POINTS = 0
-		@table = Array.new(4) { |i| Gosu::Image.new("pix/digits/0.png", :tileable => false) }
+		$BEST = IO.read('best')
+		$PAUSED = false
+		@table = Array.new(4) { Gosu::Image.new("pix/digits/0.png", :tileable => false) }
+		@best_table = Array.new(4) { Gosu::Image.new("pix/digits/0.png", :tileable => false) }
+		@gamefield.update_best(@best_table)
 		up_text
-
 		#variables for methods
 		
 	end
@@ -120,7 +124,13 @@ class TetrisGame < Gosu::Window
 		a
 	end
 
-
+	def switch_pause
+		if $PAUSED
+			$PAUSED = false
+		else
+			$PAUSED = true
+		end
+	end
 
 
 	def button_down (id)
@@ -128,13 +138,23 @@ class TetrisGame < Gosu::Window
 		when Gosu::KbEscape
 			close
 		when Gosu::KbLeft
-			move_left(@fig)
+			if $PAUSED
+				move_left(@fig)
+			end
 		when Gosu::KbRight
-			move_right(@fig)
+			if $PAUSED
+				move_right(@fig)
+			end
 		when Gosu::KbDown
-			drop_down
+			if $PAUSED
+				drop_down
+			end
 		when Gosu::KbUp
-			rotate
+			if $PAUSED
+				rotate
+			end
+		when Gosu::KbSpace
+			switch_pause
 		end
 	end
 
@@ -147,7 +167,9 @@ class TetrisGame < Gosu::Window
 		end
 		if @gamefield.recount
 			if @fig.check_floor and @fig.check_other_figs_down
+				if $PAUSED
 					@fig.figy+=1
+				end
 			else
 				@newfigure = true
 				if @flag
@@ -163,7 +185,7 @@ class TetrisGame < Gosu::Window
 			File.open('best', "w") { |io| io.write $POINTS.to_s  }
 		end
 		if gameover
-			MenuWindow.new(true).show
+			TetrisGame.new.show
 		end
 	end
 
@@ -180,10 +202,15 @@ class TetrisGame < Gosu::Window
 		end
 
 		@fig.draw(@fig.figx, @fig.figy)
-		@points_text.draw(150, 420, 0)
 		x = 210
 		y = 10
 		@table.each do |pic|
+			pic.draw(x, y, 0)
+			x+=20
+		end
+		x = 210
+		y = 360
+		@best_table.each do |pic|
 			pic.draw(x, y, 0)
 			x+=20
 		end
@@ -191,35 +218,5 @@ class TetrisGame < Gosu::Window
 
 end
 
-class MenuWindow < Gosu::Window
-	def initialize (game_over)
-		super 200, 200
-		self.caption = "Tetris menu"
-		@game_over = game_over
-		@game_over_text = Gosu::Image.from_text('GAME OVER', 20)
-		@start_text = Gosu::Image.from_text('f to start, esc to exit', 20)
-		$BEST = IO.read('best')
-		@best_text = Gosu::Image.from_text("BEST #{$BEST}", 20)
-
-	end
-
-	def button_down (id)
-		case id
-		when Gosu::KbF
-			TetrisGame.new.show
-		when Gosu::KbEscape
-			close
-		end
-	end
-
-	def draw
-		if @game_over
-			@game_over_text.draw(10, 30, 0)
-		end
-		@start_text.draw(10, 50, 0)
-		@best_text.draw(10, 70, 0)
-	end
-end
-
-MenuWindow.new(false).show
+TetrisGame.new.show
 

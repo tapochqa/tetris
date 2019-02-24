@@ -53,6 +53,7 @@ class Field
 		4.times do |i|
 			table[i] = Gosu::Image.new("pix/digits/#{arr[i]}.png", :tileable => false)
 		end
+		table
 	end
 
 	def fupdate	(f, fcm, table)
@@ -81,6 +82,10 @@ class Field
 		$POINTS+=bonus
 		update_table($POINTS, table)
 		f
+	end
+
+	def update_best (table)
+		table = update_table($BEST, table)
 	end
 
 
