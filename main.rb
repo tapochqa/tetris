@@ -177,6 +177,7 @@ class TetrisGame < Gosu::Window
 		end
 		if game_over
 			TetrisGame.new.show
+			close
 		end
 	end
 
