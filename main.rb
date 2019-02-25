@@ -9,60 +9,60 @@ class TetrisGame < Gosu::Window
 
 	def initialize
 
-		@flag, @flag2 = false
+		@flag, @flag_2 = false
 		super 300, 400
 		self.caption = "Tetris"
-		@background = Gosu::Image.new("pix/back.png", :tileable => false)
-		@gamefield = Field.new
+		@back_ground = Gosu::Image.new("pix/back.png", :tileable => false)
+		@game_field = Field.new
 		@score = 0
-		@newfigure = true
+		@new_figure = true
 		@fig_next = MovingFigure.new(5, 0, 1+rand(7))
 		@text_a = 0
 		@text_f = false
-		$POINTS = 0
-		$BEST = IO.read('best')
-		$PAUSED = false
+		$points = 0
+		$best = IO.read('best')
+		$paused = false
 		@table = Array.new(4) { Gosu::Image.new("pix/digits/0.png", :tileable => false) }
 		@best_table = Array.new(4) { Gosu::Image.new("pix/digits/0.png", :tileable => false) }
-		@gamefield.update_best(@best_table)
+		@game_field.update_best(@best_table)
 		up_text
 		#variables for methods
 		
 	end
 
 	def up_text
-		@text_a = $POINTS
+		@text_a = $points
 		@points_text = Gosu::Image.from_text(@text_a.to_s, 20)
 	end
 
 	def move_left (fig)
 		a = true 
 		fig.fcm.each do |c|
-			if c[0] == 0 or $FIELD [c[0]-1][c[1]] == 1
+			if c[0] == 0 or $field[c[0]-1][c[1]] == 1
 				a = false
 			end
 		end
 		if a
-			fig.figx -= 1
+			fig.fig_x -= 1
 		end
 	end
 
 	def move_right (fig)
 		a = true
 		fig.fcm.each do |c|
-			if c[0] == 9 or $FIELD [c[0]+1][c[1]] == 1
+			if c[0] == 9 or $field[c[0]+1][c[1]] == 1
 				a = false
 			end
 		end
-		if a 
-			fig.figx += 1
+		if a
+			fig.fig_x += 1
 		end
 	end
 
 	def drop_down
 		while @fig.check_floor and @fig.check_other_figs_down
-			@fig.figy+=1
-			@fig.countfig(@fig.figx, @fig.figy)
+			@fig.fig_y+=1
+			@fig.count_fig(@fig.fig_x, @fig.fig_y)
 		end
 	end
 
@@ -83,19 +83,19 @@ class TetrisGame < Gosu::Window
 
 	def rotate
 		a = true
-		@morphed_figure = MovingFigure.new(@fig.figx, @fig.figy, @fig.morph(@fig.figtype))
+		@morphed_figure = MovingFigure.new(@fig.fig_x, @fig.fig_y, @fig.morph(@fig.fig_type))
 		@morphed_figure.fcm.each do |c|
 
 			if check_edge(@morphed_figure.fcm) == 1
 				until check_edge(@morphed_figure.fcm) == 0 do
-					@morphed_figure.figx+=1
-					@morphed_figure.countfig(@morphed_figure.figx, @morphed_figure.figy)
+					@morphed_figure.fig_x+=1
+					@morphed_figure.count_fig(@morphed_figure.fig_x, @morphed_figure.fig_y)
 				end
 
 			elsif check_edge(@morphed_figure.fcm) == 2
 				until check_edge(@morphed_figure.fcm) == 0 do 
-					@morphed_figure.figx-=1
-					@morphed_figure.countfig(@morphed_figure.figx, @morphed_figure.figy)
+					@morphed_figure.fig_x-=1
+					@morphed_figure.count_fig(@morphed_figure.fig_x, @morphed_figure.fig_y)
 				end
 			end
 
@@ -103,21 +103,16 @@ class TetrisGame < Gosu::Window
 
 		@morphed_figure.fcm.each do |c|
 
-			if $FIELD[c[0]][c[1]] == 1
-				a = false
-			end
-
+			a = false if $field[c[0]][c[1]] == 1
 		end
 
-		if a
-			@fig = @morphed_figure
-		end
+		@fig = @morphed_figure if a
 	end
 
-	def gameover
+	def game_over
 		a = false
 		10.times do |i|
-			if $FIELD[i][0] == 1
+			if $field[i][0] == 1
 				a = true
 			end
 		end
@@ -125,32 +120,38 @@ class TetrisGame < Gosu::Window
 	end
 
 	def switch_pause
-		if $PAUSED
-			$PAUSED = false
+		if $paused
+			$paused = false
 		else
-			$PAUSED = true
+			$paused = true
 		end
 	end
 
+	def draw_table (x, y, table)
+		table.each {|pic|
+			pic.draw(x, y, 0)
+			x+=20
+		}
+	end
 
 	def button_down (id)
 		case id
 		when Gosu::KbEscape
 			close
 		when Gosu::KbLeft
-			if $PAUSED
+			if $paused
 				move_left(@fig)
 			end
 		when Gosu::KbRight
-			if $PAUSED
+			if $paused
 				move_right(@fig)
 			end
 		when Gosu::KbDown
-			if $PAUSED
+			if $paused
 				drop_down
 			end
 		when Gosu::KbUp
-			if $PAUSED
+			if $paused
 				rotate
 			end
 		when Gosu::KbSpace
@@ -159,59 +160,48 @@ class TetrisGame < Gosu::Window
 	end
 
 	def update
-		if @newfigure
-			@newfigure = false
+		if @new_figure
+			@new_figure = false
 			@fig = @fig_next
 			@fig_next = MovingFigure.new(5, 0, 1+rand(7))
 			@flag = true
 		end
-		if @gamefield.recount
+		if @game_field.recount
 			if @fig.check_floor and @fig.check_other_figs_down
-				if $PAUSED
-					@fig.figy+=1
+				if $paused
+					@fig.fig_y+=1
 				end
 			else
-				@newfigure = true
+				@new_figure = true
 				if @flag
 					@flag = false
-					$FIELD = @gamefield.fupdate($FIELD, @fig.fcm, @table)
+					$field = @game_field.fupdate($field, @fig.fcm, @table)
 				end
 			end
 		end
 
-		if $POINTS.to_i > $BEST.to_i
-			File.open('best', "w") { |io| io.write $POINTS.to_s  }
+		if $points.to_i > $best.to_i
+			File.open('best', "w") { |io| io.write $points.to_s  }
 		end
-		if gameover
+		if game_over
 			TetrisGame.new.show
 		end
 	end
 
 	def draw
-		@background.draw(0, 0, 0)
+		@back_ground.draw(0, 0, 0)
 		@fig_next.draw_mini_image(210, 50)
 
 		10.times do |i|
 			20.times do |j|
-				if $FIELD[i][j] == 1
-					@gamefield.draw(i, j)
+				if $field[i][j] == 1
+					@game_field.draw(i, j)
 				end
 			end
 		end
-
-		@fig.draw(@fig.figx, @fig.figy)
-		x = 210
-		y = 10
-		@table.each do |pic|
-			pic.draw(x, y, 0)
-			x+=20
-		end
-		x = 210
-		y = 360
-		@best_table.each do |pic|
-			pic.draw(x, y, 0)
-			x+=20
-		end
+		draw_table(210, 10 , @table)
+		draw_table(210, 360, @best_table)
+		@fig.draw(@fig.fig_x, @fig.fig_y)
 	end
 
 end

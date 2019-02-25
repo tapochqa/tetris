@@ -2,53 +2,53 @@ class MovingFigure
 
 	def f_to_f (fig_type)
 		
-		f = Array.new() {[]}
+		f = Array.new {[]}
 		c = Array.new(2, 0)
 
-		IO.foreach("gamecore/#{fig_type}") do |line|
-			line.split('').each do |symbol|
+		IO.foreach("gamecore/#{fig_type}") {|line|
+			line.split('').each {|symbol|
 				if symbol == '1'
 					f.push([c[0], c[1]])
 				end
 				c[0]+=1
-			end
+			}
 			c[0]=0
 			c[1]+=1
-		end
+		}
 		f
 	end
 
 
-	def countfig (x, y)
+	def count_fig (x, y)
 		# @fcm is figure coordinates massive
-		@fcm = f_to_f(@figtype)
-		@fcm.each do |thing|
+		@fcm = f_to_f(@fig_type)
+		@fcm.each {|thing|
 			thing[0]+=x
 			thing[1]+=y
-		end
+		}
 	end
 	
-	attr_accessor :figtype
+	attr_accessor :fig_type
 	attr_accessor :fcm
-	attr_accessor :figx
-	attr_accessor :figy
+	attr_accessor :fig_x
+	attr_accessor :fig_y
 
 	def initialize(x, y, f_type)
-		@figx = x
-		@figy = y
-		@figtype = f_type
-		countfig(x, y)
-		@blockimage = Gosu::Image.new("pix/figs/block.png")
-		if @figtype >=1 and @figtype <= 7
-			@mini_image = Gosu::Image.new("pix/figs/fig#{@figtype}.png")
+		@fig_x = x
+		@fig_y = y
+		@fig_type = f_type
+		count_fig(x, y)
+		@block_image = Gosu::Image.new("pix/figs/block.png")
+		if @fig_type >=1 and @fig_type <= 7
+			@mini_image = Gosu::Image.new("pix/figs/fig#{@fig_type}.png")
 		end
 		@floor = 19
 	end
 
 	def draw (x, y)
-		countfig(x, y)
+		count_fig(x, y)
 		4.times do |i|
-			@blockimage.draw(@fcm[i][0]*20, @fcm[i][1]*20, 0)
+			@block_image.draw(@fcm[i][0]*20, @fcm[i][1]*20, 0)
 		end
 	end
 
@@ -69,7 +69,7 @@ class MovingFigure
 
 	def check_other_figs_down
 		a = true
-		if $FIELD [@fcm[0][0]][@fcm[0][1]+1] == 1 or ($FIELD [@fcm[1][0]][@fcm[1][1]+1] == 1 or ($FIELD [@fcm[2][0]][@fcm[2][1]+1] == 1 or $FIELD [@fcm[3][0]][@fcm[3][1]+1] == 1))
+		if $field[@fcm[0][0]][@fcm[0][1]+1] == 1 or ($field[@fcm[1][0]][@fcm[1][1]+1] == 1 or ($field[@fcm[2][0]][@fcm[2][1]+1] == 1 or $field[@fcm[3][0]][@fcm[3][1]+1] == 1))
 			a = false
 		end
 		a

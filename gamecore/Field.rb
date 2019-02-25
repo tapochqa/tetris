@@ -2,15 +2,15 @@ class Field
 	def initialize
 		#0 - empty
 		#1 - static
-		$FIELD = Array.new(10) { Array.new(20, 0)  }
+		$field = Array.new(10) { Array.new(20, 0)  }
 		@clean_row = Array.new(10) {0}
 		@full_row = Array.new(10) {1}
-		@staticblock = Gosu::Image.new("pix/figs/static.png")
+		@static_block = Gosu::Image.new("pix/figs/static.png")
 		@counter = 0
 	end
 
 	def draw(i, j)
-		@staticblock.draw(i*20, j*20, 0)
+		@static_block.draw(i*20, j*20, 0)
 	end
 
 
@@ -79,13 +79,13 @@ class Field
 			end
 		end
 		f = flipped.transpose
-		$POINTS+=bonus
-		update_table($POINTS, table)
+		$points+=bonus
+		update_table($points, table)
 		f
 	end
 
 	def update_best (table)
-		table = update_table($BEST, table)
+		table = update_table($best, table)
 	end
 
 
