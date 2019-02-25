@@ -14,10 +14,8 @@ class TetrisGame < Gosu::Window
 		self.caption = "Tetris"
 		@back_ground = Gosu::Image.new("pix/back.png", :tileable => false)
 		@game_field = Field.new
-		@score = 0
 		@new_figure = true
 		@fig_next = MovingFigure.new(5, 0, 1+rand(7))
-		@text_a = 0
 		@text_f = false
 		$points = 0
 		$best = IO.read('best')
@@ -25,14 +23,8 @@ class TetrisGame < Gosu::Window
 		@table = Array.new(4) { Gosu::Image.new("pix/digits/0.png", :tileable => false) }
 		@best_table = Array.new(4) { Gosu::Image.new("pix/digits/0.png", :tileable => false) }
 		@game_field.update_best(@best_table)
-		up_text
 		#variables for methods
 		
-	end
-
-	def up_text
-		@text_a = $points
-		@points_text = Gosu::Image.from_text(@text_a.to_s, 20)
 	end
 
 	def move_left (fig)
