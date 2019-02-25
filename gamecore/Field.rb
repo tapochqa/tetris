@@ -3,7 +3,8 @@ class Field
 		#0 - empty
 		#1 - static
 		$FIELD = Array.new(10) { Array.new(20, 0)  }
-
+		@clean_row = Array.new(10) {0}
+		@full_row = Array.new(10) {1}
 		@staticblock = Gosu::Image.new("pix/figs/static.png")
 		@counter = 0
 	end
@@ -65,13 +66,12 @@ class Field
 	end
 
 	def rek_rows (f, table)
-		clean_row = Array.new(10) {0}
-		full_row = Array.new(10) {1}
+
 		bonus = 0
 		flipped = f.transpose
-		flipped.delete(full_row)
+		flipped.delete(@full_row)
 		until flipped.size == 20
-			flipped.unshift (clean_row)
+			flipped.unshift (@clean_row)
 			if bonus == 0
 				bonus+=1
 			else

@@ -175,8 +175,6 @@ class TetrisGame < Gosu::Window
 				if @flag
 					@flag = false
 					$FIELD = @gamefield.fupdate($FIELD, @fig.fcm, @table)
-					up_text
-					@text_f = true
 				end
 			end
 		end
