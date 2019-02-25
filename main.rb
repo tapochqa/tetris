@@ -27,7 +27,7 @@ class TetrisGame < Gosu::Window
 		
 	end
 
-  def move_left (fig)
+	def move_left (fig)
 		a = true 
 		fig.fcm.each do |c|
 			if c[0] == 0 or $field[c[0]-1][c[1]] == 1
@@ -128,27 +128,50 @@ class TetrisGame < Gosu::Window
 
 	def button_down (id)
 		case id
-		when Gosu::KbEscape
+      when Gosu::KbEscape
 			close
-		when Gosu::KbLeft
-			if $paused
-				move_left(@fig)
-			end
-		when Gosu::KbRight
-			if $paused
-				move_right(@fig)
-			end
-		when Gosu::KbDown
-			if $paused
-				drop_down
-			end
-		when Gosu::KbUp
-			if $paused
-				rotate
-			end
-		when Gosu::KbSpace
-			switch_pause
-		end
+      when Gosu::KbLeft
+        if $paused
+				  move_left(@fig)
+        end
+
+      when Gosu::GpLeft
+        if $paused
+          move_left(@fig)
+        end
+
+		  when Gosu::KbRight
+		  	if $paused
+			  	move_right(@fig)
+        end
+      when Gosu::GpRight
+        if $paused
+          move_right(@fig)
+        end
+
+      when Gosu::KbDown
+        if $paused
+          drop_down
+        end
+      when Gosu::GpDown
+        if $paused
+          drop_down
+        end
+      when Gosu::KbUp
+        if $paused
+          rotate
+        end
+      when Gosu::GpButton0
+        if $paused
+          rotate
+        end
+      when Gosu::KbSpace
+        switch_pause
+      when Gosu::GpButton6
+        switch_pause
+      else
+        # type code here
+    end
 	end
 
 	def update
@@ -178,7 +201,7 @@ class TetrisGame < Gosu::Window
 		if game_over
 			TetrisGame.new.show
 			close
-    end
+		end
 	end
 
 	def draw
