@@ -5,7 +5,7 @@ class Field
 		$field = Array.new(10) { Array.new(20, 0)  }
 		@clean_row = Array.new(10) {0}
 		@full_row = Array.new(10) {1}
-		@static_block = Gosu::Image.new("pix/figs/static.png")
+		@static_block = Gosu::Image.new('pix/figs/static.png')
 		@counter = 0
 	end
 
@@ -51,9 +51,7 @@ class Field
 
 	def update_table(i, table)
 		arr = int_to_array(i)
-		4.times do |i|
-			table[i] = Gosu::Image.new("pix/digits/#{arr[i]}.png", :tileable => false)
-		end
+		4.times {|j| table[j] = Gosu::Image.new("pix/digits/#{arr[j]}.png", :tileable => false)}
 		table
 	end
 
@@ -61,8 +59,7 @@ class Field
 		fcm.each do |c|
 			f[c[0]][c[1]]= 1
 		end
-		f = rek_rows(f, table)
-		f
+    rek_rows(f, table)
 	end
 
 	def rek_rows (f, table)
@@ -85,7 +82,7 @@ class Field
 	end
 
 	def update_best (table)
-		table = update_table($best, table)
+    update_table($best, table)
 	end
 
 

@@ -20,14 +20,14 @@ class TetrisGame < Gosu::Window
 		$points = 0
 		$best = IO.read('best')
 		$paused = false
-		@table = Array.new(4) { Gosu::Image.new("pix/digits/0.png", :tileable => false) }
-		@best_table = Array.new(4) { Gosu::Image.new("pix/digits/0.png", :tileable => false) }
+		@table = Array.new(4) { Gosu::Image.new('pix/digits/0.png', :tileable => false) }
+		@best_table = Array.new(4) { Gosu::Image.new('pix/digits/0.png', :tileable => false) }
 		@game_field.update_best(@best_table)
 		#variables for methods
 		
 	end
 
-	def move_left (fig)
+  def move_left (fig)
 		a = true 
 		fig.fcm.each do |c|
 			if c[0] == 0 or $field[c[0]-1][c[1]] == 1
@@ -173,12 +173,12 @@ class TetrisGame < Gosu::Window
 		end
 
 		if $points.to_i > $best.to_i
-			File.open('best', "w") { |io| io.write $points.to_s  }
+			File.open('best', 'w') { |io| io.write $points.to_s  }
 		end
 		if game_over
 			TetrisGame.new.show
 			close
-		end
+    end
 	end
 
 	def draw

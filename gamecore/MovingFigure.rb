@@ -38,7 +38,7 @@ class MovingFigure
 		@fig_y = y
 		@fig_type = f_type
 		count_fig(x, y)
-		@block_image = Gosu::Image.new("pix/figs/block.png")
+		@block_image = Gosu::Image.new('pix/figs/block.png')
 		if @fig_type >=1 and @fig_type <= 7
 			@mini_image = Gosu::Image.new("pix/figs/fig#{@fig_type}.png")
 		end
