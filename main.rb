@@ -1,76 +1,39 @@
 #!usr/bin/env ruby
 
 require 'gosu'
-require_relative 'gamecore/Field'
-require_relative 'gamecore/MovingFigure'
+require_relative 'gamecore/field'
+require_relative 'gamecore/moving_figure'
+require_relative 'gamecore/table.rb'
 
+$last = 0
 
 class TetrisGame < Gosu::Window
 
 	def initialize
-
+    $start_x = 4
+    $start_y = 0
 		@flag, @flag_2 = false
 		super 300, 400
-		self.caption = "Tetris"
-		@back_ground = Gosu::Image.new("pix/back.png", :tileable => false)
+		self.caption = 'Tetris'
+		@back_ground = Gosu::Image.new('pix/back.png', :tileable => false)
+		@drop_sound = Gosu::Sample.new('sound/fall 4.wav')
+		@back_ground_sound = Gosu::Song.new('sound/songs/easy 1.mp3')
+		@back_ground_sound.volume = 0.1
+		@back_ground_sound.play
 		@game_field = Field.new
 		@new_figure = true
-		@fig_next = MovingFigure.new(5, 0, 1+rand(7))
+		@fig_next = MovingFigure.new($start_x, $start_y, 1+rand(7))
 		@text_f = false
 		$points = 0
 		$best = IO.read('best')
 		$paused = false
-		@table = Array.new(4) { Gosu::Image.new('pix/digits/0.png', :tileable => false) }
-		@best_table = Array.new(4) { Gosu::Image.new('pix/digits/0.png', :tileable => false) }
-		@game_field.update_best(@best_table)
+		@table = Table.new
+		@best_table = Table.new
+		puts @best_table
+		@best_table.t_update($best)
+		@drop_type = 'soft'
 		#variables for methods
 		
-	end
-
-	def move_left (fig)
-		a = true 
-		fig.fcm.each do |c|
-			if c[0] == 0 or $field[c[0]-1][c[1]] == 1
-				a = false
-			end
-		end
-		if a
-			fig.fig_x -= 1
-		end
-	end
-
-	def move_right (fig)
-		a = true
-		fig.fcm.each do |c|
-			if c[0] == 9 or $field[c[0]+1][c[1]] == 1
-				a = false
-			end
-		end
-		if a
-			fig.fig_x += 1
-		end
-	end
-
-	def drop_down
-		while @fig.check_floor and @fig.check_other_figs_down
-			@fig.fig_y+=1
-			@fig.count_fig(@fig.fig_x, @fig.fig_y)
-		end
-	end
-
-	def check_edge(fcm)
-		# 1 left
-		# 2 right
-		# 0 OK
-		a = 0
-		fcm.each do |c|
-			if c[0]<0
-				a = 1
-			elsif c[0]>9
-				a = 2
-			end
-		end
-		a
 	end
 
 	def rotate
@@ -78,14 +41,14 @@ class TetrisGame < Gosu::Window
 		@morphed_figure = MovingFigure.new(@fig.fig_x, @fig.fig_y, @fig.morph(@fig.fig_type))
 		@morphed_figure.fcm.each do |c|
 
-			if check_edge(@morphed_figure.fcm) == 1
-				until check_edge(@morphed_figure.fcm) == 0 do
+			if @morphed_figure.check_edge == 1
+				until @morphed_figure.check_edge == 0 do
 					@morphed_figure.fig_x+=1
 					@morphed_figure.count_fig(@morphed_figure.fig_x, @morphed_figure.fig_y)
 				end
 
-			elsif check_edge(@morphed_figure.fcm) == 2
-				until check_edge(@morphed_figure.fcm) == 0 do 
+			elsif @morphed_figure.check_edge == 2
+				until @morphed_figure.check_edge == 0 do
 					@morphed_figure.fig_x-=1
 					@morphed_figure.count_fig(@morphed_figure.fig_x, @morphed_figure.fig_y)
 				end
@@ -119,52 +82,29 @@ class TetrisGame < Gosu::Window
 		end
 	end
 
-	def draw_table (x, y, table)
-		table.each {|pic|
-			pic.draw(x, y, 0)
-			x+=20
-		}
-	end
+
 
 	def button_down (id)
 		case id
       when Gosu::KbEscape
-			close
+		  	close
       when Gosu::KbLeft
-        if $paused
-				  move_left(@fig)
-        end
-
+        @fig.move_left if $paused
       when Gosu::GpLeft
-        if $paused
-          move_left(@fig)
-        end
-
-		  when Gosu::KbRight
-		  	if $paused
-			  	move_right(@fig)
-        end
+        @fig.move_left if $paused
+	  when Gosu::KbRight
+        @fig.move_right if $paused
       when Gosu::GpRight
-        if $paused
-          move_right(@fig)
-        end
-
+        @fig.move_right if $paused
       when Gosu::KbDown
-        if $paused
-          drop_down
-        end
+        @fig.drop_down if $paused
+				@drop_type = false
       when Gosu::GpDown
-        if $paused
-          drop_down
-        end
+        @fig.drop_down if $paused
       when Gosu::KbUp
-        if $paused
-          rotate
-        end
+        rotate if $paused
       when Gosu::GpButton0
-        if $paused
-          rotate
-        end
+        rotate if $paused
       when Gosu::KbSpace
         switch_pause
       when Gosu::GpButton6
@@ -178,7 +118,7 @@ class TetrisGame < Gosu::Window
 		if @new_figure
 			@new_figure = false
 			@fig = @fig_next
-			@fig_next = MovingFigure.new(5, 0, 1+rand(7))
+			@fig_next = MovingFigure.new($start_x, $start_y, 1+rand(7))
 			@flag = true
 		end
 		if @game_field.recount
@@ -187,10 +127,13 @@ class TetrisGame < Gosu::Window
 					@fig.fig_y+=1
 				end
 			else
+				@fig.drop_sound_play(@drop_type)
 				@new_figure = true
+				@drop_type = true
 				if @flag
 					@flag = false
-					$field = @game_field.fupdate($field, @fig.fcm, @table)
+					$field = @game_field.fupdate($field, @fig.fcm)
+					@table.t_update($points)
 				end
 			end
 		end
@@ -215,10 +158,28 @@ class TetrisGame < Gosu::Window
 				end
 			end
 		end
-		draw_table(210, 10 , @table)
-		draw_table(210, 360, @best_table)
+		@table.draw_table(210, 10)
+		@best_table.draw_table(210, 360)
 		@fig.draw(@fig.fig_x, @fig.fig_y)
 	end
+
+end
+
+class Menu < Gosu::Window
+
+  def initialize
+		@back_ground = Gosu::Image.new('pix/menu_back.png')
+    @last = Table.new.t_update($last)
+    @best = Table.new.t_update($best)
+	end
+
+  def update
+    #
+  end
+
+  def draw
+    @back_ground.draw(0, 0, 0)
+  end
 
 end
 
