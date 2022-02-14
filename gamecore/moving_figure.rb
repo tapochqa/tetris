@@ -49,10 +49,10 @@ class MovingFigure
 	end
 
 	def drop_sound_play(type)
-    volume = 0.1
+    volume = 1
 		case type
 			when true #soft (natural)
-				@soft_drop_sound.play(volume/2)
+				@soft_drop_sound.play(volume)
       when false #hard (manual)
         @hard_drop_sound.play(volume, 1.5)
     end
@@ -162,6 +162,7 @@ class MovingFigure
 			@fig_y+=1
 			count_fig(@fig_x, @fig_y)
 		end
+		$points+=1
 	end
 
 	def check_edge

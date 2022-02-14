@@ -10,6 +10,7 @@ $last = 0
 class TetrisGame < Gosu::Window
 
 	def initialize
+		$speed = 8 #less is faster
     $start_x = 4
     $start_y = 0
 		@flag, @flag_2 = false
@@ -17,9 +18,9 @@ class TetrisGame < Gosu::Window
 		self.caption = 'Tetris'
 		@back_ground = Gosu::Image.new('pix/back.png', :tileable => false)
 		@drop_sound = Gosu::Sample.new('sound/fall 4.wav')
-		@back_ground_sound = Gosu::Song.new('sound/songs/easy 1.mp3')
-		@back_ground_sound.volume = 0.1
-		@back_ground_sound.play
+		@back_ground_sound = Gosu::Song.new("sound/songs/easy #{rand(3)+1}.wav")
+		@back_ground_sound.volume = 0.8
+		#@back_ground_sound.play
 		@game_field = Field.new
 		@new_figure = true
 		@fig_next = MovingFigure.new($start_x, $start_y, 1+rand(7))
@@ -77,8 +78,10 @@ class TetrisGame < Gosu::Window
 	def switch_pause
 		if $paused
 			$paused = false
+			@back_ground_sound.pause
 		else
 			$paused = true
+			@back_ground_sound.play(looping = true)
 		end
 	end
 
@@ -92,18 +95,18 @@ class TetrisGame < Gosu::Window
         @fig.move_left if $paused
       when Gosu::GpLeft
         @fig.move_left if $paused
-	  when Gosu::KbRight
+	  	when Gosu::KbRight
         @fig.move_right if $paused
       when Gosu::GpRight
         @fig.move_right if $paused
       when Gosu::KbDown
         @fig.drop_down if $paused
 				@drop_type = false
-      when Gosu::GpDown
+      when Gosu::GpButton0
         @fig.drop_down if $paused
       when Gosu::KbUp
         rotate if $paused
-      when Gosu::GpButton0
+      when Gosu::GpButton2
         rotate if $paused
       when Gosu::KbSpace
         switch_pause
@@ -142,6 +145,7 @@ class TetrisGame < Gosu::Window
 			File.open('best', 'w') { |io| io.write $points.to_s  }
 		end
 		if game_over
+			@back_ground_sound.pause
 			TetrisGame.new.show
 			close
 		end
@@ -168,6 +172,7 @@ end
 class Menu < Gosu::Window
 
   def initialize
+  	super 100, 100
 		@back_ground = Gosu::Image.new('pix/menu_back.png')
     @last = Table.new.t_update($last)
     @best = Table.new.t_update($best)
@@ -184,4 +189,4 @@ class Menu < Gosu::Window
 end
 
 TetrisGame.new.show
-
+#Menu.new.show
