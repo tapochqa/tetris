@@ -10,7 +10,7 @@ $last = 0
 class TetrisGame < Gosu::Window
 
 	def initialize
-		$speed = 8 #less is faster
+		$speed = 30 #less is faster
     $start_x = 4
     $start_y = 0
 		@flag, @flag_2 = false
