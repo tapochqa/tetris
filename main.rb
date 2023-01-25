@@ -1,5 +1,6 @@
 #!usr/bin/env ruby
 
+require 'bundler/setup'
 require 'gosu'
 require_relative 'gamecore/field'
 require_relative 'gamecore/moving_figure'
@@ -10,16 +11,17 @@ $last = 0
 class TetrisGame < Gosu::Window
 
 	def initialize
-		$speed = 30 #less is faster
+		$init_speed = 12
+		$speed = $init_speed #less is faster
     $start_x = 4
     $start_y = 0
 		@flag, @flag_2 = false
 		super 300, 400
-		self.caption = 'Tetris'
-		@back_ground = Gosu::Image.new('pix/back.png', :tileable => false)
+		self.caption = 'Тетрис — нажмите пробел'
+		@back_ground = Gosu::Image.new('pix/back.png', :tileable =>  false)
 		@drop_sound = Gosu::Sample.new('sound/fall 4.wav')
-		@back_ground_sound = Gosu::Song.new("sound/songs/easy #{rand(3)+1}.wav")
-		@back_ground_sound.volume = 0.8
+		@back_ground_sound = Gosu::Song.new("sound/songs/easy #{rand(4)+1}.wav")
+		@back_ground_sound.volume = 1
 		#@back_ground_sound.play
 		@game_field = Field.new
 		@new_figure = true
@@ -30,7 +32,6 @@ class TetrisGame < Gosu::Window
 		$paused = false
 		@table = Table.new
 		@best_table = Table.new
-		puts @best_table
 		@best_table.t_update($best)
 		@drop_type = 'soft'
 		#variables for methods
@@ -124,20 +125,21 @@ class TetrisGame < Gosu::Window
 			@fig_next = MovingFigure.new($start_x, $start_y, 1+rand(7))
 			@flag = true
 		end
-		if @game_field.recount
-			if @fig.check_floor and @fig.check_other_figs_down
-				if $paused
-					@fig.fig_y+=1
-				end
-			else
-				@fig.drop_sound_play(@drop_type)
-				@new_figure = true
-				@drop_type = true
-				if @flag
-					@flag = false
-					$field = @game_field.fupdate($field, @fig.fcm)
-					@table.t_update($points)
-				end
+		if @fig.check_floor and @fig.check_other_figs_down and @game_field.recount
+			if $paused
+				@fig.fig_y+=1
+			end
+		end
+		unless @fig.check_floor and @fig.check_other_figs_down
+			@fig.drop_sound_play(@drop_type)
+			@new_figure = true
+			@drop_type = true
+			if @flag
+				@flag = false
+				$field = @game_field.fupdate($field, @fig.fcm)
+				@table.t_update($points)
+				$speed = [1, ($init_speed - ($points / 10).to_i)].max
+				puts $speed
 			end
 		end
 
