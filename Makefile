@@ -1,7 +1,7 @@
 all: bundle run
 
 run:
-	ruby main.rb
+	bundle exec ruby main.rb
 
 bundle:
 	bundle install

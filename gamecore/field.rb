@@ -3,12 +3,15 @@ class Field
 		#0 - empty
 		#1 - static
 		$field = Array.new(10) { Array.new(20, 0)  }
+		$init_field = $field
 		@clean_row = Array.new(10) {0}
 		@full_row = Array.new(10) {1}
 		@static_block = Gosu::Image.new('pix/figs/static.png')
 		@counter = 0
     @rek_sound = Array.new(4) {|i| Gosu::Sample.new("sound/rows #{i+1}.wav")}
 	end
+
+	attr_accessor :counter
 
 	def draw(i, j)
 		@static_block.draw(i*20, j*20, 0)
@@ -49,7 +52,7 @@ class Field
 			end
 		end
 		f = flipped.transpose
-		$points+=bonus
+		$points += bonus * ($init_speed - $speed + 1)
 		#$speed-=1 if bonus > 0
     @rek_sound[rows-1].play(1) if rows>0
 		f

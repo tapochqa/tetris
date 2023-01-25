@@ -6,8 +6,6 @@ require_relative 'gamecore/field'
 require_relative 'gamecore/moving_figure'
 require_relative 'gamecore/table.rb'
 
-$last = 0
-
 class TetrisGame < Gosu::Window
 
 	def initialize
@@ -22,17 +20,19 @@ class TetrisGame < Gosu::Window
 		@drop_sound = Gosu::Sample.new('sound/fall 4.wav')
 		@back_ground_sound = Gosu::Song.new("sound/songs/easy #{rand(4)+1}.wav")
 		@back_ground_sound.volume = 1
-		#@back_ground_sound.play
+		@back_ground_sound.play
 		@game_field = Field.new
 		@new_figure = true
 		@fig_next = MovingFigure.new($start_x, $start_y, 1+rand(7))
 		@text_f = false
 		$points = 0
 		$best = IO.read('best')
-		$paused = false
+		$paused = true
 		@table = Table.new
 		@best_table = Table.new
 		@best_table.t_update($best)
+		@speed_table = Table.new
+		@speed_table.t_update($init_speed - $speed)
 		@drop_type = 'soft'
 		#variables for methods
 		
@@ -105,6 +105,7 @@ class TetrisGame < Gosu::Window
 				@drop_type = false
       when Gosu::GpButton0
         @fig.drop_down if $paused
+        @drop_type = false
       when Gosu::KbUp
         rotate if $paused
       when Gosu::GpButton2
@@ -130,7 +131,7 @@ class TetrisGame < Gosu::Window
 				@fig.fig_y+=1
 			end
 		end
-		unless @fig.check_floor and @fig.check_other_figs_down
+		unless (@fig.check_floor and @fig.check_other_figs_down)
 			@fig.drop_sound_play(@drop_type)
 			@new_figure = true
 			@drop_type = true
@@ -138,8 +139,9 @@ class TetrisGame < Gosu::Window
 				@flag = false
 				$field = @game_field.fupdate($field, @fig.fcm)
 				@table.t_update($points)
-				$speed = [1, ($init_speed - ($points / 10).to_i)].max
-				puts $speed
+				$speed = [1, $init_speed - ($points / 30).to_i].max
+				@game_field.counter = 0
+				@speed_table.t_update($init_speed - $speed)
 			end
 		end
 
@@ -148,8 +150,8 @@ class TetrisGame < Gosu::Window
 		end
 		if game_over
 			@back_ground_sound.pause
-			TetrisGame.new.show
 			close
+			Menu.new.show
 		end
 	end
 
@@ -165,6 +167,7 @@ class TetrisGame < Gosu::Window
 			end
 		end
 		@table.draw_table(210, 10)
+		@speed_table.draw_table(210, 280)
 		@best_table.draw_table(210, 360)
 		@fig.draw(@fig.fig_x, @fig.fig_y)
 	end
@@ -176,16 +179,31 @@ class Menu < Gosu::Window
   def initialize
   	super 100, 100
 		@back_ground = Gosu::Image.new('pix/menu_back.png')
-    @last = Table.new.t_update($last)
-    @best = Table.new.t_update($best)
+    @last = Table.new
+    @last.t_update($points)
+    self.caption = 'Тетрис — нажмите пробел'
 	end
 
   def update
     #
   end
 
+  def button_down (id)
+		case id
+      when Gosu::KbSpace
+        close
+        TetrisGame.new.show
+      when Gosu::GpButton6
+        close
+        TetrisGame.new.show
+      else
+        # type code here
+    end
+	end
+
   def draw
     @back_ground.draw(0, 0, 0)
+    @last.draw_table(10, 60)
   end
 
 end
