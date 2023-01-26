@@ -9,13 +9,14 @@ require_relative 'gamecore/table.rb'
 class TetrisGame < Gosu::Window
 
 	def initialize
-		$init_speed = 12
-		$speed = $init_speed #less is faster
+		$init_speed = 15
+		$speed = $init_speed # less is faster
+		@horizontal_speed = 7 # less is faster
     $start_x = 4
     $start_y = 0
 		@flag, @flag_2 = false
 		super 300, 400
-		self.caption = 'Тетрис — нажмите пробел'
+		self.caption = 'Тетрис'
 		@back_ground = Gosu::Image.new('pix/back.png', :tileable =>  false)
 		@drop_sound = Gosu::Sample.new('sound/fall 4.wav')
 		@back_ground_sound = Gosu::Song.new("sound/songs/easy #{rand(4)+1}.wav")
@@ -34,6 +35,7 @@ class TetrisGame < Gosu::Window
 		@speed_table = Table.new
 		@speed_table.t_update($init_speed - $speed)
 		@drop_type = 'soft'
+		@rotate_counter = 0
 		#variables for methods
 		
 	end
@@ -91,27 +93,31 @@ class TetrisGame < Gosu::Window
 	def button_down (id)
 		case id
       when Gosu::KbEscape
-		  	close
-      when Gosu::KbLeft
+		  	switch_pause
+	  	when Gosu::KbLeft
         @fig.move_left if $paused
+        @rotate_counter = 0
       when Gosu::GpLeft
         @fig.move_left if $paused
+        @rotate_counter = 0
 	  	when Gosu::KbRight
         @fig.move_right if $paused
+        @rotate_counter = 0
       when Gosu::GpRight
         @fig.move_right if $paused
-      when Gosu::KbDown
+        @rotate_counter = 0
+      when Gosu::KbUp
         @fig.drop_down if $paused
 				@drop_type = false
       when Gosu::GpButton0
+        rotate if $paused
+      when Gosu::GpUp
         @fig.drop_down if $paused
         @drop_type = false
-      when Gosu::KbUp
+      when Gosu::KbSpace
         rotate if $paused
       when Gosu::GpButton2
         rotate if $paused
-      when Gosu::KbSpace
-        switch_pause
       when Gosu::GpButton6
         switch_pause
       else
@@ -120,17 +126,44 @@ class TetrisGame < Gosu::Window
 	end
 
 	def update
+
+		@rotate_counter += 1
+
+		if @rotate_counter % @horizontal_speed == 0
+			if button_down?(Gosu::KbRight) or button_down?(Gosu::GpRight)
+				@fig.move_right if $paused
+			end
+			if button_down?(Gosu::KbLeft) or button_down?(Gosu::GpLeft)
+				@fig.move_left if $paused
+			end
+		end
+
 		if @new_figure
 			@new_figure = false
 			@fig = @fig_next
 			@fig_next = MovingFigure.new($start_x, $start_y, 1+rand(7))
 			@flag = true
 		end
+
+		if @fig.check_floor and @fig.check_other_figs_down and @rotate_counter % (@horizontal_speed - 3) == 0
+			if button_down?(Gosu::KbDown) or button_down?(Gosu::GpDown)
+				@fig.fig_y+=1 if $paused
+				@rotate_counter = 0
+			end
+		end
+
+		
+		
 		if @fig.check_floor and @fig.check_other_figs_down and @game_field.recount
 			if $paused
 				@fig.fig_y+=1
 			end
 		end
+
+
+
+
+
 		unless (@fig.check_floor and @fig.check_other_figs_down)
 			@fig.drop_sound_play(@drop_type)
 			@new_figure = true

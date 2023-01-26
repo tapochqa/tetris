@@ -52,7 +52,7 @@ class Field
 			end
 		end
 		f = flipped.transpose
-		$points += bonus * ($init_speed - $speed + 1)
+		$points += bonus * (1 + (($init_speed - $speed + 1) / 10))
 		#$speed-=1 if bonus > 0
     @rek_sound[rows-1].play(1) if rows>0
 		f

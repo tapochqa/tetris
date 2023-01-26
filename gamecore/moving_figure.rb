@@ -136,7 +136,7 @@ class MovingFigure
 	def move_left
 		a = true 
 		@fcm.each do |c|
-			if c[0] == 0 or $field[c[0]-1][c[1]] == 1
+			if c[0] <= 0 or $field[c[0]-1][c[1]] == 1
 				a = false
 			end
 		end
@@ -148,7 +148,7 @@ class MovingFigure
 	def move_right
 		a = true
 		@fcm.each do |c|
-			if c[0] == 9 or $field[c[0]+1][c[1]] == 1
+			if c[0] >= 9 or $field[c[0]+1][c[1]] == 1
 				a = false
 			end
 		end
